@@ -34,12 +34,21 @@
             </div>    
         </div>
         <div class="panel">
-            <form id="locationInput">
-                <input type="text" class="search" placeholder="Search Location...">
-                <button type="submit" class="submit">
-                    <i class="fas fa-search"></i>
-                </button>
-            </form>
+            <form id="locationInput" autocomplete="off">
+    <input
+        type="text"
+        class="search"
+        id="searchInput"
+        placeholder="Search Location..."
+    />
+    <button type="submit" class="submit">
+        <i class="fas fa-search"></i>
+    </button>
+
+    <!-- 🔽 Suggestions -->
+    <ul id="suggestions" class="suggestions"></ul>
+</form>
+
             <ul class="cities">
                 <li class="city">Mumbai</li>
                 <li class="city">Dubai</li>
