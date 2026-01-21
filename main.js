@@ -172,3 +172,65 @@ function fetchWeatherData() {
 fetchWeatherData();
 // Fade in the page
 app.style.opacity = "1";
+
+const API_KEY = "YOUR_OPENWEATHER_API_KEY";
+
+const searchInput = document.getElementById("searchInput");
+const suggestions = document.getElementById("suggestions");
+const form = document.getElementById("locationInput");
+
+let debounceTimer;
+
+// 🔍 Autocomplete while typing
+searchInput.addEventListener("input", () => {
+  clearTimeout(debounceTimer);
+  const query = searchInput.value.trim();
+
+  if (query.length < 2) {
+    suggestions.innerHTML = "";
+    return;
+  }
+
+  debounceTimer = setTimeout(() => {
+    fetchCitySuggestions(query);
+  }, 300);
+});
+
+async function fetchCitySuggestions(query) {
+  try {
+    const url = `https://api.openweathermap.org/geo/1.0/direct?q=${query}&limit=6&appid=${API_KEY}`;
+    const res = await fetch(url);
+    const data = await res.json();
+
+    suggestions.innerHTML = "";
+
+    data.forEach(city => {
+      const li = document.createElement("li");
+      li.textContent = `${city.name}, ${city.country}`;
+
+      li.addEventListener("click", () => {
+        searchInput.value = city.name;
+        suggestions.innerHTML = "";
+
+        // BEST PRACTICE
+        fetchWeatherByCoords(city.lat, city.lon);
+      });
+
+      suggestions.appendChild(li);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Prevent form submit reload
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+});
+
+// Hide suggestions on outside click
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("#locationInput")) {
+    suggestions.innerHTML = "";
+  }
+});
